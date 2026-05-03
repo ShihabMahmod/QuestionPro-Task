@@ -1,0 +1,111 @@
+#  Grocery Booking System
+
+A production-ready Grocery Booking System backend built with **Node.js, Express, PostgreSQL, and Prisma**.  
+It supports authentication, role-based access control, inventory management, and order processing with transactional safety.
+
+---
+
+## Features
+
+-  Authentication & Authorization (JWT + Role-based access)
+-  Admin panel for grocery item management (CRUD)
+-  User features: browse items & place orders
+-  Transaction-safe order processing (Prisma transactions)
+-  Security: Helmet, CORS, Rate limiting, Input validation
+-  Scalable modular architecture
+-  Winston logging with file rotation
+-  Swagger API documentation
+
+---
+
+##  Tech Stack
+
+- Node.js 20
+- Express.js
+- PostgreSQL
+- Prisma ORM
+- Docker & Docker Compose
+- JWT Authentication
+- Winston Logger
+- Joi Validation
+
+---
+
+##  Environment Variables
+
+Create a `.env` file in root:
+
+```env
+NODE_ENV=production
+PORT=3000
+
+DATABASE_URL="postgresql://postgres:postgres@postgres:5432/grocery_db?schema=public"
+
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRES_IN=7d
+
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=Admin@123456
+ADMIN_NAME=Super Admin
+
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=100
+
+LOG_LEVEL=info
+ Run with Docker (Recommended)
+1️ Start the application
+docker compose up --build
+
+This will:
+
+Start PostgreSQL database
+Start Node.js backend server
+2️ Run database migration
+
+Open a new terminal and run:
+
+npx prisma migrate dev --name init
+
+This will:
+
+Create all database tables
+Apply Prisma schema changes
+3️ Restart Docker containers
+
+Stop running containers:
+
+Ctrl + C
+
+Then restart:
+
+docker compose up
+4️ Access the application
+API Base URL:
+http://localhost:3000
+Swagger API Docs:
+http://localhost:3000/api-docs
+ Quick Start Summary
+docker compose up --build
+npx prisma migrate dev --name init
+docker compose up
+ Project Structure
+src/
+ ├── config/
+ ├── controllers/
+ ├── middlewares/
+ ├── routes/
+ ├── services/
+ ├── utils/
+ └── app.js
+Testing
+
+You can test APIs using:
+
+Swagger UI
+Postman
+Curl
+ Notes
+Make sure Docker is running before starting
+.env file must be properly configured
+First admin is created via environment variables
+Prisma migration must run at least once before using APIs

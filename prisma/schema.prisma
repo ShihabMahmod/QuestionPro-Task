@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model GroceryItem {
+  id            String   @id @default(uuid())
+  name          String
+  price         Decimal  @db.Decimal(10, 2)
+  inventoryCount Int     @default(0) @map("inventory_count")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt
+
+  orderItems OrderItem[]
+
+  @@index([name])
+  @@map("grocery_items")
+}
+
+model Order {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  totalPrice Decimal  @db.Decimal(10, 2) @map("total_price")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String   @id @default(uuid())
+  orderId       String   @map("order_id")
+  groceryItemId String   @map("grocery_item_id")
+  quantity      Int
+  price         Decimal  @db.Decimal(10, 2)
+
+  order         Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  groceryItem   GroceryItem  @relation(fields: [groceryItemId], references: [id])
+
+  @@unique([orderId, groceryItemId])
+  @@index([orderId])
+  @@index([groceryItemId])
+  @@map("order_items")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
